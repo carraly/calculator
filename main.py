@@ -6,27 +6,29 @@ class Button(customtkinter.CTkButton):
         self.value = value
 
         super().__init__(master, text=value, command=self.button_callback, width=70, height=70)
-        self.grid(row=posiX, column=posiY, padx=2, pady=2)
+        self.grid(row=posiX, column=posiY, padx=2, pady=2, sticky="nsew")
+        
 
     def button_callback(self):
         print(f"button {self.value} pressed")
 
-class TextBox(customtkinter.CTkTextbox):
+class Label(customtkinter.CTkLabel):
     def __init__(self, master):
-        super().__init__(master, width=400, corner_radius=0, height=100)
-        self.grid_rowconfigure(0, weight=1)  # configure grid system
-        self.grid_columnconfigure(0, weight=1)
-
+        super().__init__(master, width=400, corner_radius=0, height=100, anchor="e", padx=8)
+        
         self.grid(row=0, column=0, columnspan=4, sticky="nsew")
-        self.insert("0.0", "Some example text!\n")
+        self.configure(text = "Some example text!")
 
 
 app = customtkinter.CTk()
 app.title("my app")
-app.geometry("400x450")
+app.geometry("300x480")
 
 for i in range(4):
     app.grid_columnconfigure(i, weight=1)
+    
+for i in range(6):
+    app.grid_rowconfigure(i, weight=1)
 
 # region Numbered Buttons
 button_9 = Button(app, "9", 2, 0)
@@ -54,6 +56,6 @@ button_Comma = Button(app, ",", 5, 2)
 button_Equal = Button(app, "=", 5, 3)
 # endregion
 
-text = TextBox(app)
+text = Label(app)
 
 app.mainloop()
