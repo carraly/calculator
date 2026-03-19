@@ -1,4 +1,5 @@
 import customtkinter
+import re
 
 class Button(customtkinter.CTkButton):
     value = 0
@@ -23,34 +24,60 @@ class Button(customtkinter.CTkButton):
                         height=70, fg_color=back_color, text_color=txt_color, hover_color=hv_color)
         self.grid(row=posiX, column=posiY, padx=2, pady=2, sticky="nsew")
 
+    def calculate(self, user_input: str):
+        math_table = str.maketrans(",–x÷", ".-*/")
+        original_table = str.maketrans(".", ",")
+        user_input = user_input.translate(math_table)
+        result = eval(user_input)
+        result = str(result).translate(original_table)
+        input_label.configure(text = f"{result}")
+
+
     def validate(self):
         user_input = input_label.cget("text")
+        split_input = re.split(r"([+x÷–])", user_input)
         if user_input == "":
             if self.value.isdigit() or self.value == "–":
+                if self.value == "00":
+                    self.value = "0"
                 return True
             else:
                 return False
-        elif user_input == "0":
+
+        elif split_input[-1] in ["0"]:
             if self.value in ["0", "00", "="]:
                 return False
             else:
                 return True
+
+        elif self.value == ",":
+            if split_input[-1] == "":
+                return False
+            for item in split_input[-1]:
+                if item == ",":
+                    return False
+            return True
+
         elif user_input[-1] in ["–", "+", ","]:
             if self.value.isdigit():
                 return True
-            else: 
+            else:
                 return False
+
         elif user_input[-1] in ["x", "÷"]:
             if (self.value.isdigit()) or (self.value == "–"):
                 return True
             else:
                 return False
+        elif self.value == "=":
+            self.calculate(user_input)
         else:
             return True
 
     def button_callback(self):
-        if self.value.isdigit():
-            self.validate()
+        if self.validate():
+            user_input = input_label.cget("text")
+            input_label.configure(text = f"{user_input}{self.value}")
 
 
 class Label(customtkinter.CTkLabel):
