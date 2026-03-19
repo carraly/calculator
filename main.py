@@ -1,8 +1,9 @@
 import customtkinter
 
 class Button(customtkinter.CTkButton):
-    def __init__(self, value, posiX, posiY):
+    value = 0
 
+    def __init__(self, value, posiX, posiY):
         if value.isdigit() or value == ",":
             back_color = "#525150"
             txt_color = "#ffffff"
@@ -16,21 +17,48 @@ class Button(customtkinter.CTkButton):
             txt_color = "#525150"
             hv_color = "#747471"
 
+        self.value = value
+
         super().__init__(app, text=value, font=("arial",25), command=self.button_callback, width=70,
                         height=70, fg_color=back_color, text_color=txt_color, hover_color=hv_color)
         self.grid(row=posiX, column=posiY, padx=2, pady=2, sticky="nsew")
 
-        self.value = value
+    def validate(self):
+        user_input = input_label.cget("text")
+        if user_input == "":
+            if self.value.isdigit() or self.value == "–":
+                return True
+            else:
+                return False
+        elif user_input == "0":
+            if self.value in ["0", "00", "="]:
+                return False
+            else:
+                return True
+        elif user_input[-1] in ["–", "+", ","]:
+            if self.value.isdigit():
+                return True
+            else: 
+                return False
+        elif user_input[-1] in ["x", "÷"]:
+            if (self.value.isdigit()) or (self.value == "–"):
+                return True
+            else:
+                return False
+        else:
+            return True
 
     def button_callback(self):
-        print(f"button {self.value} pressed")
+        if self.value.isdigit():
+            self.validate()
+
 
 class Label(customtkinter.CTkLabel):
     def __init__(self, master, posiX, posiY, label_size, font_size):
         super().__init__(master, height=label_size, anchor="e", padx=10, font=("arial", font_size))
 
         self.grid(row=posiX, column=posiY, columnspan=4, sticky="nsew")
-        self.configure(text = "Some example text!")
+        self.configure(text = "")
 
 customtkinter.set_appearance_mode("dark")
 app = customtkinter.CTk()
@@ -44,8 +72,8 @@ for i in range(4):
 for i in range(6):
     app.grid_rowconfigure(i, weight=1)
 
-Input = Label(app, 0, 0, 60, 35)
-Output = Label(app, 1, 0, 40, 20)
+input_label = Label(app, 0, 0, 60, 35)
+output_label = Label(app, 1, 0, 40, 20)
 
 button_layouts = { # value, posiX, posiY
     "b9": ("9", 3, 0),
