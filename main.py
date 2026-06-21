@@ -33,7 +33,19 @@ class Button(customtkinter.CTkButton):
                                     "%": "/100*"
                                     })
         original_table = str.maketrans(".", ",")
+
+        index = 0
+        for caracter in user_input:
+            if caracter == "%":
+                try: 
+                    if not(user_input[index + 1]).isdigit():
+                        user_input = user_input[0:index] + "/100" + user_input [index+1:]
+                except:
+                    user_input = user_input[0:index] + "/100" + user_input [index+1:]
+            index += 1
+
         user_input = user_input.translate(math_table)
+
         result = eval(user_input)
         result = str(result).translate(original_table)
         split_result = re.split(",", result)
