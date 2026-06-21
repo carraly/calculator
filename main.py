@@ -50,6 +50,13 @@ class Button(customtkinter.CTkButton):
             else:
                 return True
 
+        elif self.value == "AC":
+            input_label.configure(text = "")
+
+        elif self.value == "Del":
+            user_input = str(input_label.cget("text"))
+            input_label.configure(text = f"{user_input[0:-1]}")
+
         elif self.value == ",":
             if split_input[-1] == "":
                 return False
@@ -69,8 +76,10 @@ class Button(customtkinter.CTkButton):
                 return True
             else:
                 return False
+            
         elif self.value == "=":
             self.calculate(user_input)
+
         else:
             return True
 
