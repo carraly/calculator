@@ -25,11 +25,20 @@ class Button(customtkinter.CTkButton):
         self.grid(row=posiX, column=posiY, padx=2, pady=2, sticky="nsew")
 
     def calculate(self, user_input: str):
-        math_table = str.maketrans(",–x÷", ".-*/")
+        math_table = str.maketrans({
+                                    ",": ".",
+                                    "–": "-",
+                                    "x": "*",
+                                    "÷": "/",
+                                    "%": "/100*"
+                                    })
         original_table = str.maketrans(".", ",")
         user_input = user_input.translate(math_table)
         result = eval(user_input)
         result = str(result).translate(original_table)
+        split_result = re.split(",", result)
+        if split_result[-1] == "0":
+            result = result[0:-2]
         input_label.configure(text = f"{result}")
 
 
@@ -44,18 +53,18 @@ class Button(customtkinter.CTkButton):
             else:
                 return False
 
-        elif split_input[-1] in ["0"]:
-            if self.value in ["0", "00", "="]:
-                return False
-            else:
-                return True
-
         elif self.value == "AC":
             input_label.configure(text = "")
 
         elif self.value == "Del":
             user_input = str(input_label.cget("text"))
             input_label.configure(text = f"{user_input[0:-1]}")
+
+        elif split_input[-1] in ["0"]:
+            if self.value in ["0", "00", "="]:
+                return False
+            else:
+                return True
 
         elif self.value == ",":
             if split_input[-1] == "":
@@ -76,6 +85,9 @@ class Button(customtkinter.CTkButton):
                 return True
             else:
                 return False
+            
+        elif user_input[-1] in ["%"] and self.value == "%":
+            return False
             
         elif self.value == "=":
             self.calculate(user_input)
